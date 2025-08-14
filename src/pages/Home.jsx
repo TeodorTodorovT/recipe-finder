@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getRecipes } from '../lib/api';
+import RecipeCard from '../components/RecipeCard';
 
 
 const Home = () => {
@@ -14,17 +15,13 @@ const Home = () => {
         return <div>Something went wrong!</div>
     }
 
-    console.log(data?.meals.slice(0, 3));
-    
+    console.log(data?.meals.slice(0, 10));
 
     return (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4'>
             {isPending ? 'Loading...' :
                 data?.meals.slice(0, 10).map((meal) => (
-                    <div key={meal.idMeal}>
-                        <h2>{meal.strMeal}</h2>
-                        <img src={meal.strMealThumb} alt={meal.strMeal} />
-                    </div>
+                    <RecipeCard key={meal.idMeal} title={meal.strMeal} image={meal.strMealThumb} idMeal={meal.idMeal} />
                 ))
                 }
         </div>
