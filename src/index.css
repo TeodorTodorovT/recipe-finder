@@ -1,1 +1,65 @@
 @import "tailwindcss";
+
+@theme {
+
+    /* primery scale */
+    --color-primery-50:  #FAF8F0;
+    --color-primery-100: #F4F0E1;
+    --color-primery-200: #EDE7D0;
+    --color-primery-300: #E7E0C3;
+    --color-primery-400: #E4DBB9; /* a bit lighter than base */
+    --color-primery-500: #E2DBBE; /* base */
+    --color-primery-600: #CDC5A5;
+    --color-primery-700: #B5AD8B;
+    --color-primery-800: #988F6F;
+    --color-primery-900: #7A7257;
+    --color-primery-950: #4A4433;
+
+    /* alias keeps existing usage working */
+    --color-primery: var(--color-primery-500);
+
+    /* secondary scale */
+    --color-secondary-50:  #F3F7F5;
+    --color-secondary-100: #E7EFEC;
+    --color-secondary-200: #D3E3DC;
+    --color-secondary-300: #BED5CB;
+    --color-secondary-400: #AFCABD;
+    --color-secondary-500: #9DBBAE; /* base */
+    --color-secondary-600: #8BA89B;
+    --color-secondary-700: #728E82;
+    --color-secondary-800: #5C756A;
+    --color-secondary-900: #485D54;
+    --color-secondary-950: #2E3B38;
+
+    --color-secondary: var(--color-secondary-500);
+
+    /* background primery scale */
+    --color-background-primery-50:  #F3F7FA;
+    --color-background-primery-100: #E7EEF5;
+    --color-background-primery-200: #D3E1ED;
+    --color-background-primery-300: #B7CDDE;
+    --color-background-primery-400: #96B6CC;
+    --color-background-primery-500: #769FB6; /* base */
+    --color-background-primery-600: #5E8BA0;
+    --color-background-primery-700: #4C7286;
+    --color-background-primery-800: #3E5C6D;
+    --color-background-primery-900: #314A59;
+    --color-background-primery-950: #213342;
+
+    --color-background-primery: var(--color-background-primery-500);
+
+    /* background secondary scale */
+    --color-background-secondary-50:  #F1F5EB;
+    --color-background-secondary-100: #E4ECD8;
+    --color-background-secondary-200: #CBD9B7;
+    --color-background-secondary-300: #AEC08F;
+    --color-background-secondary-400: #879F63;
+    --color-background-secondary-500: #243010; /* base */
+    --color-background-secondary-600: #1E280D;
+    --color-background-secondary-700: #18210B;
+    --color-background-secondary-800: #131A08;
+    --color-background-secondary-900: #0E1306;
+    --color-background-secondary-950: #090D04;
+
+    --color-background-secondary: var(--color-background-secondary-500);
+}
