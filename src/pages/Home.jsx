@@ -26,7 +26,7 @@ const Home = () => {
 	return (
 		<div className="bg-background-primery flex flex-col items-center min-h-[calc(100vh-56px)]">
 			<div className="w-full max-w-md p-4 m-30">
-                <p className="text-white text-3xl font-bold text-center p-10">What are you craving?</p>
+                <p className="text-white text-2xl md:text-3xl font-bold text-center p-10">What are you craving?</p>
 				<div className="relative w-full">
 					<input
 						type="text"
