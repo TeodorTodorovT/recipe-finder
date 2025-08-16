@@ -1,12 +1,44 @@
-# React + Vite
+# Recipe Finder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+Recipe Finder is a simple web app that allows users to search for recipes using The Meal DB.  
+It displays recipe details in a clean, responsive layout and helps users discover new meals easily.
 
-Currently, two official plugins are available:
+## Features
+- Search recipes by keyword
+- Display recipe cards with images and titles
+- Responsive design (mobile & desktop)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+## Tech Stack
+- React (with Vite)
+- Tailwind CSS
+- The Meal DB
+- Deployed on Vercel
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/teodorTodrovT/recipe-finder.git
+   ```
+2. Navigate into the project folder:
+   ```bash
+   cd recipe-finder
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Deployment
+The app is live at: https://find-recipe-now.vercel.app/
+
+## Next Steps
+- Fix: None
+- Add: Details page, Favorite page, Shopping list generator
+- Improve: UI
+
