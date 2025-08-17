@@ -9,3 +9,11 @@ export const getRecipes = async (searchQuery) => {
 
     return await res.json();
 };
+
+export const getRecipeDetails = async (id) => {
+    const res = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+    );
+
+    return await res.json();
+};
