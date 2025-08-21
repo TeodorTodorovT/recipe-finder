@@ -1,15 +1,59 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getRecipeDetails } from '../lib/api';
+import { checkSavedRecipe, getRecipeDetails, saveRecipe, unSaveRecipe } from '../lib/api';
+import { useState, useContext, useEffect } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 const RecipeDetails = () => {
+    const { user } = useContext(AuthContext);
+    
+    const navigate = useNavigate();
+
+    const [isSaved, setIsSaved] = useState(false);
     const { id } = useParams();
     const { data, isPending, error } = useQuery({
         queryKey: ['recipe', id],
         queryFn: () => getRecipeDetails(id),
     });
 
+    const ingredients = [];
+    const measures = [];
+
+    for(let i = 1; i <= 20; i++) {
+        if(data?.meals[0][`strIngredient${i}`]) {
+            ingredients.push(data?.meals[0][`strIngredient${i}`]);
+            measures.push(data?.meals[0][`strMeasure${i}`]);
+        }
+    }
+
+    useEffect(() => {
+        if(user) {
+            checkSavedRecipe(id, user.id).then((data) => {
+                console.log(data);
+                
+                setIsSaved(data ? true : false);
+            });
+        }
+    }, [user, id]);
+
+    const handleSave = () => {
+
+        if(!user) { 
+            navigate('/login');
+            return;
+        }
+        if(!isSaved) {
+            saveRecipe(id, user.id, ingredients, data?.meals[0].strMeal, data?.meals[0].strMealThumb);
+            setIsSaved(true);
+        } else {
+            unSaveRecipe(id, user.id);
+            setIsSaved(false);
+        }
+
+    }
+
     console.log(data);
+    
 
     return (
         <div className="bg-background-primery h-full">
@@ -28,9 +72,12 @@ const RecipeDetails = () => {
                             className="w-3xs md:w-md object-cover "
                         />
                         <div className="flex flex-col">
-                            <h1 className="text-white text-4xl font-bold">
-                                {data?.meals[0].strMeal}
-                            </h1>
+                            <div className="flex justify-between gap-4">
+                                <h1 className="text-white text-4xl font-bold">
+                                    {data?.meals[0].strMeal}
+                                </h1>
+                                <button className={`${isSaved ? "bg-background-primery-700" : ""} text-white border-2 border-white rounded-md font-medium p-2 w-18 cursor-pointer`} onClick={handleSave}>{isSaved ? "Saved" : "Save"}</button>
+                            </div>
                             <p className="text-white text-xl">
                                 {data?.meals[0].strCategory}
                             </p>
@@ -46,126 +93,12 @@ const RecipeDetails = () => {
                                 Ingredients
                             </h2>
                             <ul className="text-white text-xl">
-                                {data?.meals[0].strIngredient1 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure1}{' '}
-                                        {data?.meals[0].strIngredient1}
+                                {ingredients.map((ingredient, index) => (
+                                    <li key={index}>
+                                        {measures[index]}{' '}
+                                        {ingredient}
                                     </li>
-                                )}
-                                {data?.meals[0].strIngredient2 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure2}{' '}
-                                        {data?.meals[0].strIngredient2}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient3 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure3}{' '}
-                                        {data?.meals[0].strIngredient3}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient4 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure4}{' '}
-                                        {data?.meals[0].strIngredient4}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient5 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure5}{' '}
-                                        {data?.meals[0].strIngredient5}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient6 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure6}{' '}
-                                        {data?.meals[0].strIngredient6}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient7 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure7}{' '}
-                                        {data?.meals[0].strIngredient7}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient8 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure8}{' '}
-                                        {data?.meals[0].strIngredient8}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient9 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure9}{' '}
-                                        {data?.meals[0].strIngredient9}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient10 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure10}{' '}
-                                        {data?.meals[0].strIngredient10}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient11 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure11}{' '}
-                                        {data?.meals[0].strIngredient11}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient12 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure12}{' '}
-                                        {data?.meals[0].strIngredient12}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient13 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure13}{' '}
-                                        {data?.meals[0].strIngredient13}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient14 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure14}{' '}
-                                        {data?.meals[0].strIngredient14}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient15 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure15}{' '}
-                                        {data?.meals[0].strIngredient15}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient16 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure16}{' '}
-                                        {data?.meals[0].strIngredient16}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient17 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure17}{' '}
-                                        {data?.meals[0].strIngredient17}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient18 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure18}{' '}
-                                        {data?.meals[0].strIngredient18}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient19 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure19}{' '}
-                                        {data?.meals[0].strIngredient19}
-                                    </li>
-                                )}
-                                {data?.meals[0].strIngredient20 && (
-                                    <li>
-                                        {data?.meals[0].strMeasure20}{' '}
-                                        {data?.meals[0].strIngredient20}
-                                    </li>
-                                )}
+                                ))}
                             </ul>
                         </div>
                         <div className="self-start flex-2/3">
