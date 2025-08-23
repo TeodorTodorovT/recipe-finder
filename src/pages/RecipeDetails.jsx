@@ -17,12 +17,11 @@ const RecipeDetails = () => {
     });
 
     const ingredients = [];
-    const measures = [];
+    
 
     for(let i = 1; i <= 20; i++) {
         if(data?.meals[0][`strIngredient${i}`]) {
-            ingredients.push(data?.meals[0][`strIngredient${i}`]);
-            measures.push(data?.meals[0][`strMeasure${i}`]);
+            ingredients.push({ingredient: data?.meals[0][`strIngredient${i}`], measure: data?.meals[0][`strMeasure${i}`]});
         }
     }
 
@@ -95,8 +94,8 @@ const RecipeDetails = () => {
                             <ul className="text-white text-xl">
                                 {ingredients.map((ingredient, index) => (
                                     <li key={index}>
-                                        {measures[index]}{' '}
-                                        {ingredient}
+                                        {ingredient.measure}{' '}
+                                        {ingredient.ingredient}
                                     </li>
                                 ))}
                             </ul>
