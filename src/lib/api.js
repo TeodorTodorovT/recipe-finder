@@ -77,3 +77,135 @@ export const getSavedRecipes = async (userId) => {
 
     return data;
 }
+
+export const getShoppingList = async (userId) => {
+    if (!userId) return [];
+
+    const { data, error } = await supabase
+        .from('shopping_list')
+        .select('shopping_list')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (error) {
+        return [];
+    }
+
+    const raw = data?.shopping_list;
+    if (!raw) return [];
+
+    try {
+        // If stored as JSON string
+        if (typeof raw === 'string') {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        }
+        // If already JSON array
+        return Array.isArray(raw) ? raw : [];
+    } catch {
+        return [];
+    }
+}
+
+export const addToShoppingList = async (recipeId, userId) => {
+
+    const recipe = await getRecipeDetails(recipeId);
+    const shoppingList = await getShoppingList(userId);
+    
+    
+    const recipeIngredients = [];
+
+
+
+    for(let i = 1; i <= 20; i++) {
+
+        const meal = recipe?.meals[0];
+        
+
+        const ingredientName = meal[`strIngredient${i}`];
+        const amount = meal[`strMeasure${i}`];
+
+        if(meal[`strIngredient${i}`]) {
+            recipeIngredients.push({ingredientName, amount});
+        }
+    }
+
+    let newShoppingList;
+
+    if(Array.isArray(shoppingList) && shoppingList.length > 0) {
+        newShoppingList = [...shoppingList, ...recipeIngredients];
+    } else {
+        newShoppingList = recipeIngredients;
+    }
+
+
+
+    // Update existing row; if none updated, insert new row
+    const { data: updated, error: updateError } = await supabase
+        .from('shopping_list')
+        .update({ shopping_list: JSON.stringify(newShoppingList) })
+        .eq('user_id', userId)
+        .select();
+
+    if (updateError) {
+        return updateError.message;
+    }
+
+    if (!updated || updated.length === 0) {
+        const { data: inserted, error: insertError } = await supabase
+            .from('shopping_list')
+            .insert({ user_id: userId, shopping_list: JSON.stringify(newShoppingList) })
+            .select();
+
+        if (insertError) {
+            return insertError.message;
+        }
+
+        return inserted;
+    }
+
+    return updated;
+
+
+}
+
+export const removeFromShoppingList = async (recipeId, userId) => {
+    const shoppingList = await getShoppingList(userId);
+    const recipe = await getRecipeDetails(recipeId);
+
+    if (!Array.isArray(shoppingList) || shoppingList.length === 0) {
+        return [];
+    }
+
+    const recipeIngredients = [];
+
+    for (let i = 1; i <= 20; i++) {
+        const meal = recipe?.meals?.[0];
+        const ingredientName = meal?.[`strIngredient${i}`];
+        const amount = meal?.[`strMeasure${i}`];
+        if (ingredientName) {
+            recipeIngredients.push({ ingredientName, amount });
+        }
+    }
+
+    const toRemove = new Set(
+        recipeIngredients.map((ri) => `${ri.ingredientName}|${ri.amount}`)
+    );
+
+    const newShoppingList = shoppingList.filter((item) => {
+        const key = `${item.ingredientName}|${item.amount}`;
+        return !toRemove.has(key);
+    });
+
+    const { data, error } = await supabase
+        .from('shopping_list')
+        .update({ shopping_list: JSON.stringify(newShoppingList) })
+        .eq('user_id', userId)
+        .select();
+
+    if (error) {
+        return error.message;
+    }
+
+    return data;
+}
