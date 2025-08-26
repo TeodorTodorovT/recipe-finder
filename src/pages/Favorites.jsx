@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { addToShoppingList, getSavedRecipes, getShoppingList, removeFromShoppingList } from '../lib/api';
@@ -10,6 +10,8 @@ const Favorites = () => {
 
     const { user } = useContext(AuthContext);
     const queryClient = useQueryClient();
+    const [isShoppingListOpen, setIsShoppingListOpen] = useState(true);
+    const handleToggleShoppingList = () => setIsShoppingListOpen((prev) => !prev);
     const { data, isPending, error } = useQuery({
         queryKey: ['favorites', user?.id],
         queryFn: () => getSavedRecipes(user?.id),
@@ -56,9 +58,9 @@ const Favorites = () => {
     // console.log(shoppingListData);
 
     return (
-        <div className="bg-background-primery min-h-screen p-4 flex flex-row items-baseline gap-4">
-            <div className="mt-4 flex-3/4">
-                <h1 className="text-white text-4xl font-bold mb-4 text-center">
+        <div className="bg-background-primery min-h-screen p-4 flex flex-col lg:flex-row items-start gap-4  mx-auto">
+            <div className="mt-4 w-full lg:w-3/4 lg:order-1">
+                <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-center">
                     Favorites
                 </h1>
 
@@ -71,32 +73,60 @@ const Favorites = () => {
                         Error: {error.message}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {data?.length > 0 ? (
                             data.map((recipe) => (
                                 <div key={recipe.recipe_id}>
                                     <div className="flex flex-row-reverse gap-2">
                                         <button
-                                            className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer"
-                                            onClick={() =>
-                                                handleRemove(recipe.recipe_id)
-                                            }
+                                            type="button"
+                                            aria-label="Remove from favorites"
+                                            title="Remove from favorites"
+                                            className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
+                                            onClick={() => handleRemove(recipe.recipe_id)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    handleRemove(recipe.recipe_id);
+                                                }
+                                            }}
                                         >
                                             <FaTrash />
                                         </button>
-                                        <button className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer"
+                                        <button
+                                            type="button"
+                                            aria-label="Add ingredients to shopping list"
+                                            title="Add to shopping list"
+                                            className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                                             onClick={() => {
                                                 if (!user?.id) return;
                                                 addToShoppingListMutation(recipe.recipe_id);
                                             }}
-                                            >
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    if (!user?.id) return;
+                                                    addToShoppingListMutation(recipe.recipe_id);
+                                                }
+                                            }}
+                                        >
                                             <FaPlus />
                                         </button>
-                                        <button className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer"
+                                        <button
+                                            type="button"
+                                            aria-label="Remove ingredients from shopping list"
+                                            title="Remove from shopping list"
+                                            className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                                             onClick={() => {
                                                 removeFromShoppingListMutation(recipe.recipe_id);
                                             }}
-                                            >
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    removeFromShoppingListMutation(recipe.recipe_id);
+                                                }
+                                            }}
+                                        >
                                             <FaMinus />
                                         </button>
                                     </div>
@@ -108,7 +138,7 @@ const Favorites = () => {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-white text-2xl font-bold text-center col-span-4">
+                            <p className="text-white text-lg sm:text-xl md:text-2xl font-bold text-center col-span-4">
                                 No favorites yet
                             </p>
                         )}
@@ -116,21 +146,36 @@ const Favorites = () => {
                 )}
             </div>
 
-            <div className="mt-4 flex-1/4">
-                <h2 className="text-white text-2xl font-bold mb-4 text-center">
-                    Shopping List
-                </h2>
-                {Array.isArray(shoppingListData) && shoppingListData.length > 0 ? (
-                    shoppingListData.map((item, idx) => (
-                        <div key={`${item.ingredientName}-${item.amount}-${idx}`}>
-                            <p className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer">{item.ingredientName} {item.amount}</p>
-                        </div>
-                    ))
-                ) : (
-                    <p className="text-white text-2xl font-bold text-center">
-                        No items in shopping list
-                    </p>
-                )}
+            <div className="mt-4 w-full order-first lg:order-2 lg:w-1/4">
+                <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-white text-xl sm:text-2xl font-bold">
+                        Shopping List
+                    </h2>
+                    <button
+                        type="button"
+                        className="text-white text-sm font-semibold bg-background-primery-700 rounded-md px-3 py-2 hover:bg-background-primery-800 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 lg:hidden"
+                        onClick={handleToggleShoppingList}
+                    >
+                        {isShoppingListOpen ? 'Hide' : 'Show'}
+                    </button>
+                </div>
+                <div
+                    id="shopping-list-panel"
+                    aria-hidden={!isShoppingListOpen}
+                    className={`${isShoppingListOpen ? '' : 'hidden'} lg:block`}
+                >
+                    {Array.isArray(shoppingListData) && shoppingListData.length > 0 ? (
+                        shoppingListData.map((item, idx) => (
+                            <div key={`${item.ingredientName}-${item.amount}-${idx}`}>
+                                <p className="text-white text-md font-bold text-center bg-background-primery-700 rounded-md p-2 mb-2 hover:bg-background-primery-800 cursor-pointer">{item.ingredientName} {item.amount}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-white text-lg sm:text-xl md:text-2xl font-bold text-center">
+                            No items in shopping list
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );
