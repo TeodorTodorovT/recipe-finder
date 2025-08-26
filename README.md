@@ -39,6 +39,6 @@ The app is live at: https://find-recipe-now.vercel.app/
 
 ## Next Steps
 - Fix: None
-- Add: Favorite page, Shopping list generator
-- Improve: UI, Better Error MSGs
+- Add: None
+- Improve: Clear all in shopping list
 
