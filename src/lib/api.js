@@ -209,3 +209,36 @@ export const removeFromShoppingList = async (recipeId, userId) => {
 
     return data;
 }
+
+export const clearShoppingList = async (userId) => {
+    if (!userId) {
+        return [];
+    }
+
+    // First try to update existing row
+    const { data: updated, error: updateError } = await supabase
+        .from('shopping_list')
+        .update({ shopping_list: JSON.stringify([]) })
+        .eq('user_id', userId)
+        .select();
+
+    if (updateError) {
+        return updateError.message;
+    }
+
+    // If no row was updated, insert a new empty row for this user
+    if (!updated || updated.length === 0) {
+        const { data: inserted, error: insertError } = await supabase
+            .from('shopping_list')
+            .insert({ user_id: userId, shopping_list: JSON.stringify([]) })
+            .select();
+
+        if (insertError) {
+            return insertError.message;
+        }
+
+        return inserted;
+    }
+
+    return updated;
+}

@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { addToShoppingList, getSavedRecipes, getShoppingList, removeFromShoppingList } from '../lib/api';
+import { addToShoppingList, getSavedRecipes, getShoppingList, removeFromShoppingList, clearShoppingList } from '../lib/api';
 import RecipeCard from '../components/RecipeCard';
 import { FaTrash, FaPlus, FaMinus } from 'react-icons/fa';
 import { unSaveRecipe } from '../lib/api';
@@ -48,6 +48,15 @@ const Favorites = () => {
 
     const { mutate: removeFromShoppingListMutation } = useMutation({
         mutationFn: (recipeId) => removeFromShoppingList(recipeId, user.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['shoppingList', user?.id],
+            });
+        },
+    });
+
+    const { mutate: clearShoppingListMutation, isPending: isClearingShoppingList } = useMutation({
+        mutationFn: () => clearShoppingList(user.id),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['shoppingList', user?.id],
@@ -151,13 +160,44 @@ const Favorites = () => {
                     <h2 className="text-white text-xl sm:text-2xl font-bold">
                         Shopping List
                     </h2>
-                    <button
-                        type="button"
-                        className="text-white text-sm font-semibold bg-background-primery-700 rounded-md px-3 py-2 hover:bg-background-primery-800 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 lg:hidden"
-                        onClick={handleToggleShoppingList}
-                    >
-                        {isShoppingListOpen ? 'Hide' : 'Show'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            aria-label="Clear shopping list"
+                            title="Clear all"
+                            className="text-white text-sm font-semibold bg-red-600 rounded-md px-3 py-2 hover:bg-red-700 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => {
+                                if (!user?.id) return;
+                                clearShoppingListMutation();
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    if (!user?.id) return;
+                                    clearShoppingListMutation();
+                                }
+                            }}
+                            disabled={
+                                isClearingShoppingList ||
+                                !Array.isArray(shoppingListData) ||
+                                shoppingListData.length === 0
+                            }
+                            aria-disabled={
+                                isClearingShoppingList ||
+                                !Array.isArray(shoppingListData) ||
+                                shoppingListData.length === 0
+                            }
+                        >
+                            Clear all
+                        </button>
+                        <button
+                            type="button"
+                            className="text-white text-sm font-semibold bg-background-primery-700 rounded-md px-3 py-2 hover:bg-background-primery-800 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 lg:hidden"
+                            onClick={handleToggleShoppingList}
+                        >
+                            {isShoppingListOpen ? 'Hide' : 'Show'}
+                        </button>
+                    </div>
                 </div>
                 <div
                     id="shopping-list-panel"
