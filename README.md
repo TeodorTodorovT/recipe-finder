@@ -1,17 +1,40 @@
 # Recipe Finder
 
 ## Overview
-Recipe Finder is a simple web app that allows users to search for recipes using The Meal DB.  
-It displays recipe details in a clean, responsive layout and helps users discover new meals easily.
+A simple React + Tailwind CSS app to search recipes, view details, and save favorites.Built as part of my portfolio to practice API integration and Supabase authentication.
+
+## Demo
+
+[Live Demo](https://find-recipe-now.vercel.app/)
+
+## Screenshots
+
+### Homepage
+![Homepage Screenshot](./public/screenshots/homepage.png)
+
+### Recipe Details
+![Recipe Details Screenshot](./public/screenshots/recipe-details.png)
+
+### Favorites
+
+![Favorite Recipes Screenshot](./public/screenshots/favorites.png)
+
+### Login Page
+![Login Screenshot](./public/screenshots/login.png)
+
 
 ## Features
-- Search recipes by keyword
-- Display recipe cards with images and titles
-- Responsive design (mobile & desktop)
+- Search recipes from a public API
+- View detailed ingredients & instructions
+- User authentication with Supabase
+- Save recipes to favorites
+- Generate shopping list from saved recipes
+- Fully responsive (mobile + desktop)
 
 
 ## Tech Stack
 - React (with Vite)
+- Supabase (Auth + DB)
 - Tailwind CSS
 - The Meal DB
 - Deployed on Vercel
@@ -34,11 +57,10 @@ It displays recipe details in a clean, responsive layout and helps users discove
    npm run dev
    ```
 
-## Deployment
-The app is live at: https://find-recipe-now.vercel.app/
-
 ## Next Steps
 - Fix: None
 - Add: None
-- Improve: Clear all in shopping list
+- Improve: None
+
+
 
